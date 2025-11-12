@@ -1,0 +1,169 @@
+Integrantes
+- Rebecca Sarah 
+- Breno Gomes
+- Taina Martinelli
+- Rafael Passos
+- Gabryel Vigna
+- Kevin Jun
+
+
+
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        // Definir produtos
+        ProdutoEstoque prod1 = new ProdutoEstoque("prod-001", 5);
+        ProdutoEstoque prod2 = new ProdutoEstoque("prod-002", 15);
+        ProdutoEstoque prod3 = new ProdutoEstoque("prod-003", 20);
+
+        // Criar mapa de produtos (estoque)
+        Map<String, Integer> produtos = new HashMap<>();
+        produtos.put(prod1.getCodigoProduto(), prod1.getQuantidade());
+        produtos.put(prod2.getCodigoProduto(), prod2.getQuantidade());
+        produtos.put(prod3.getCodigoProduto(), prod3.getQuantidade());
+
+        // Criar fila de pedidos (como texto)
+        Queue<String> fila = new LinkedList<>();
+
+        fila.offer("Pedido 101: (item: " + prod1.getCodigoProduto() + ", Qtd: 5), (item: " + prod2.getCodigoProduto() + ", Qtd: 2)");
+        fila.offer("Pedido 102: (item: " + prod2.getCodigoProduto() + ", Qtd: 10), (item: " + prod3.getCodigoProduto() + ", Qtd: 8)");
+        fila.offer("Pedido 103: (item: " + prod1.getCodigoProduto() + ", Qtd: 2), (item: " + prod3.getCodigoProduto() + ", Qtd: 10)");
+
+        // Exibir fila
+        System.out.println("Fila de pedidos:");
+        for (String pedido : fila) {
+            System.out.println(pedido);
+        }
+
+        // Exibir estoque inicial
+        System.out.println("\nEstoque inicial:");
+        for (Map.Entry<String, Integer> entry : produtos.entrySet()) {
+            System.out.println(entry.getKey() + " -> " + entry.getValue());
+        }
+    }
+}
+
+
+import java.util.Hashmap;
+
+public class ProdutoEstoque {
+   
+    private String codigoProduto;
+ 
+    private int quantidade;
+ 
+    public ProdutoEstoque(String codigoProduto, int quantidade) {
+        this.codigoProduto = codigoProduto;
+        this.quantidade = quantidade;
+    }
+ 
+    public String getCodigoProduto() {
+        return codigoProduto;
+    }
+ 
+    public int getQuantidade() {
+        return quantidade;
+    }
+ 
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+    }
+    
+    
+    public Map<Integer, String> processarPedidos(Queue<Pedido> filaPedidos, Map<String, Integer> estoque) {
+        Map<Integer, String> resultado = new HashMap<>();
+
+           while (!filaPedidos.isEmpty()) {
+            Pedido pedido = filaPedidos.poll(); 
+            boolean atendimento = true;
+
+            for (ItemPedido item : pedido.getListaDeItens()) {
+                String codigoProduto = item.getCodigoProduto();
+                int quantidadePedido = item.getQuantidadePedida();
+
+                if (!estoque.containsKey(codigo) || estoque.get(codigo) < quantidadePedido) {
+                    atendimento = false;
+                    break;
+                }
+            }
+
+            if (atendimento) {
+                for (ItemPedido item : pedido.getListaDeItens()) {
+                    String codigo = item.getCodigoProduto();
+                    int quantidadeNova = estoque.get(codigo) - item.getQuantidadePedida();
+                    estoque.put(codigo, quantidadeNova);
+                }
+                resultado.put(pedido.getIdPedido(), "Aprovado");
+            } else {
+                resultado.put(pedido.getIdPedido(), "Rejeitado");
+            }
+        }
+
+        return resultado;
+    }
+        public String toString() {
+            return " ////////// ProdutoEstoque ////////// " + "\nCodigo produto = " + codigoProduto + "\nQuantidade = " + quantidade + "\n /////////////////////////////////// ";
+        }
+ 
+}
+
+
+
+public class ItemPedido {
+   
+    private String codigoProduto;
+   
+    private int quantidadePedida;
+ 
+    public ItemPedido(String codigoProduto, int quantidadePedida) {
+        this.codigoProduto = codigoProduto;
+        this.quantidadePedida = quantidadePedida;
+    }
+ 
+    public String getCodigoProduto() {
+        return codigoProduto;
+    }
+   
+    public int getQuantidadePedida() {
+        return quantidadePedida;
+    }
+ 
+    public void setQuantidadePedida(int quantidadePedida) {
+        this.quantidadePedida = quantidadePedida;
+    }
+
+    
+    public String toString() {
+        return " ////////// ItemPedido ////////// " + "\nCodigo produto = " + codigoProduto + "\nQuantidade pedida = " + quantidadePedida + "\n /////////////////////////////////// ";        }
+    
+}
+ 
+
+import java.util.ArrayList;
+ 
+public class Pedido {
+   
+    private int idPedido;
+   
+    private ArrayList<ItemPedido> listaDeItens = new ArrayList<>();
+   
+    public Pedido(int idPedido) {
+        this.idPedido = idPedido;
+    }
+   
+    public int getIdPedido() {
+        return idPedido;
+    }
+ 
+    public ArrayList<ItemPedido> getListaDeItens() {
+        return listaDeItens;
+    }
+
+ public String toString() {
+   return " ////////// Pedido ////////// " + "\nId do pedido = " + idPedido + "\nItens do pedido:\n" + listaDeItens + " /////////////////////////////////// ";
+ }
+    
+}
+   
